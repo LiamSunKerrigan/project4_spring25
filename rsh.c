@@ -22,26 +22,25 @@ printf("Exiting....\n");
 fflush(stdout);
 exit(0);}
 
-int server;
-
-void* messageListener(void *username){
+void* messageListener(void *arg){
+int client = open(arg, O_RDONLY);
 for(;;){
-int client = open(username, O_RDONLY);
 Message temp;
-if(read(client, &temp, sizeof temp) == sizeof temp){
-printf("Incoming message from %s: %s", temp.source, temp.msg);}
-close(client);}}
+if(read(client, &temp, sizeof temp) != sizeof temp){
+continue;}
+printf("Incoming message from %s: %s\n", temp.source, temp.msg);}}
 
 int main(int argc, char **argv){
 
 if(argc != 2){
 printf("Usage: ./rsh <username>\n");
 exit(1);}
+
 signal(SIGINT, terminate);
 
 pthread_t temp;
 pthread_create(&temp, NULL, messageListener, argv[1]);
-server = open("serverFIFO", O_WRONLY);
+int server = open("serverFIFO", O_WRONLY);
 
 for(;;){
 fprintf(stderr, "rsh>");
