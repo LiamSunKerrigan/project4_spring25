@@ -32,7 +32,5 @@ continue;}
 printf("Received a request from %s to send the message %s to %s.\n", temp.source, temp.msg, temp.target);
 
 int target = open(temp.target, O_WRONLY);
-if(target == -1){
-printf("FRICK");}
 write(target, &temp, sizeof temp);
 close(target);}}
